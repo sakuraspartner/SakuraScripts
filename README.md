@@ -2,7 +2,7 @@
 
 This repository contains a C# script for Streamer.bot that enables automatic shoutouts with Twitch clips for streamers. 
 
-There is also a version available for direct import. Simply copy the `streamerbot.sakura.export` file into the import page of Streamer.bot.
+There is also a version available for direct import. Simply copy the `shoutout.sakurascripts.sb` file into the import page of Streamer.bot.
 
 If you would like to use this for your own channel, please consider following on twitch at https://www.twitch.tv/sakuragore and perhaps even making a test shoutout to `!so SakuraGore`!
 
