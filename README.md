@@ -29,7 +29,7 @@ If you would like to use this for your own channel, please consider following on
 
 3. Create a command in Streamer.bot (e.g., !so or !shoutout) that triggers this action.
 
-## Usage
+## Usage (if you used the import)
 
 - Use `!so <username>` to shout out a user with a random clip
 - If a chatter posts a Twitch clip URL, you can use that specific clip for the shoutout
