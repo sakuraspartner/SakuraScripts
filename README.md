@@ -6,6 +6,8 @@ There is also a version available for direct import. Simply copy the `shoutout.s
 
 If you would like to use this for your own channel, please consider following on twitch at https://www.twitch.tv/sakuragore and perhaps even making a test shoutout to `!so SakuraGore`!
 
+You can also follow this at the [Streamer Bot Extensions site](https://extensions.streamer.bot/t/shoutout-clip-playing/1930).
+
 ## Features
 
 - Automatically selects a random clip when shouting out a user
