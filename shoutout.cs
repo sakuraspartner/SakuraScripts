@@ -4,6 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using System.Collections.Generic;  // Add this line
 
 public class CPHInline
 {
@@ -23,11 +26,13 @@ public class CPHInline
         if (!string.IsNullOrEmpty(watchUrl) && !string.IsNullOrWhiteSpace(watchUrl))
         {
             (slug, userName, duration) = ParseWatchUrl(watchUrl);
+            CPH.LogInfo($"SAKURA - SO - Selected clip for user: {userName} with duration: {duration} (slug: {slug})");
         }
         else
         {
             // If no URL is provided, select a random clip for the user provided in the shoutout command
             (slug, userName, duration) = SelectRandomClip();
+            CPH.LogInfo($"SAKURA - SO - Selected random clip for user: {userName} with duration: {duration} (slug: {slug})");
         }
 
         // If no valid clip is found, exit
@@ -69,7 +74,7 @@ public class CPHInline
             string userName = match.Groups["userName"].Success ? match.Groups["userName"].Value : "";
             CPH.LogInfo($"SAKURA - SO - Parsed URL - UserName: {userName}, Slug: {slug}");
 
-            float duration = FindClipDuration(userName, slug);
+            float duration = FindClipDuration(slug);
 
             if (duration == 0)
             {
@@ -89,17 +94,33 @@ public class CPHInline
     }
 
     // Find the duration of a specific clip
-    private float FindClipDuration(string userName, string slug)
+    private float FindClipDuration(string slug)
     {
-        var allClips = CPH.GetClipsForUser(userName);
-        foreach (var clip in allClips)
+        using (var httpClient = new HttpClient())
         {
-            if (clip.Id == slug)
+            string tokenValue = CPH.TwitchOAuthToken;
+            string clientIdValue = CPH.TwitchClientId;
+            
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Add("Client-ID", clientIdValue);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenValue);
+
+            var response = httpClient.GetAsync($"https://api.twitch.tv/helix/clips?id={slug}").Result;
+            var responseBody = response.Content.ReadAsStringAsync().Result;
+
+            if (response.IsSuccessStatusCode)
             {
-                return clip.Duration;
+                var root = JsonConvert.DeserializeObject<TwitchResponse>(responseBody);
+                if (root.data.Count > 0)
+                {
+                    return root.data[0].duration;
+                }
             }
+
+            CPH.LogError($"SAKURA - SO - Failed to retrieve clip duration for slug: {slug}");
+            CPH.LogError($"SAKURA - SO - API Response: {responseBody}");
+            return 0;
         }
-        return 0;
     }
 
     // Select a random clip for the shouted out user
@@ -240,4 +261,17 @@ public class CPHInline
         CPH.ObsSetSourceVisibility(scene, text, false);
         CPH.ObsSetMediaSourceFile(scene, source, "");
     }
+}
+
+public class Clip
+{
+    public string id { get; set; }
+    public float duration { get; set; }
+    // ... other properties ...
+}
+
+public class TwitchResponse
+{
+    public List<Clip> data { get; set; }
+    // ... other properties ...
 }
