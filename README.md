@@ -30,6 +30,7 @@ You can also follow this at the [Streamer Bot Extensions site](https://extension
    - `twitchClipUrl`: (Optional) Set this if you want to play a specific clip URL (works best when automatically parsed from Twitch Chat)
 
 3. Create a command in Streamer.bot (e.g., !so or !shoutout) that triggers this action.
+4. Add the relevant OBS scene and sources to your OBS. The scene that is defined in the actions is ShoutOuts. It is important to make sure that you add this scene and the sources defined below. You can then add this ShoutOuts scene to your normal scenes. That way you can have your shout outs in any scene you would normally be using. Of course, you can name it something else, you will just need to update the actions.
 
 ## Usage (if you used the import)
 
